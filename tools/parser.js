@@ -1,8 +1,9 @@
-const ASSIGNER_DEFINITIONS = "assignerDefinition";
-const DESCRIPTOR_DEFINITIONS = "descriptorDefinition";
-const TYPE_DEFINITIONS = "typeDefinition";
-const VARIABLE_ASSIGNMENT = "variableAssignment";
+import { NODE_TYPE  } from "../utils/enums";
 
+/**
+ * Represents a Parser object that parses tokens into an abstract syntax tree (AST).
+ * @class
+ */
 class Parser {
   constructor(tokens) {
     this.tokens = tokens;
@@ -25,6 +26,12 @@ class Parser {
     return this.ast;
   }
 
+  /**
+   * Parses the type definitions from the given value.
+   *
+   * @param {string} value - The value containing the type definitions.
+   * @returns {Object} - An object representing the parsed type definitions.
+   */
   parseTypeDefinitions(value) {
     // Extract type definitions
     const typeDefs = value.replace("Define Types:", "").trim().split(";");
@@ -39,6 +46,12 @@ class Parser {
     return typeDefMap;
   }
 
+  /**
+   * Parses the descriptor definitions from the given value.
+   *
+   * @param {string} value - The value containing the descriptor definitions.
+   * @returns {string[]} An array of parsed descriptor definitions.
+   */
   parseDescriptorDefinitions(value) {
     // Extract descriptor definitions
     return value
@@ -48,8 +61,13 @@ class Parser {
       .map((d) => d.trim());
   }
 
+  /**
+   * Parses assigner definitions from a given value.
+   *
+   * @param {string} value - The value to parse assigner definitions from.
+   * @returns {string[]} - An array of assigner definitions.
+   */
   parseAssignerDefinitions(value) {
-    // Extract assigner definitions
     return value
       .replace("Assigners:", "")
       .trim()
@@ -57,10 +75,19 @@ class Parser {
       .map((a) => a.trim());
   }
 
+  /**
+   * Escapes special characters in a string for use in a regular expression.
+   * @param {string} string - The input string to escape.
+   * @returns {string} - The escaped string.
+   */
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
   }
 
+  /**
+   * Creates a regular expression pattern based on the descriptor, type, and assigner definitions.
+   * @returns {RegExp} The regular expression pattern for matching the defined syntax.
+   */
   createRegexFromDefinitions() {
     const descriptorPattern = this.ast.setup.descriptorDefinitions
       .map(this.escapeRegExp)
@@ -78,13 +105,19 @@ class Parser {
     return new RegExp(pattern, "i"); // 'i' for case-insensitive matching
   }
 
+  /**
+   * Parses a variable assignment statement.
+   *
+   * @param {string} value - The string representation of the variable assignment statement.
+   * @returns {object|null} - The parsed variable assignment object, or null if no match is found.
+   */
   parseVariableAssignment(value) {
     const regex = this.createRegexFromDefinitions();
     const parts = value.match(regex);
 
     if (parts) {
       return {
-        nodeType: VARIABLE_ASSIGNMENT,
+        nodeType: NODE_TYPE.VARIABLE_ASSIGNMENT,
         descriptor: parts[1].trim(),
         variableName: parts[2].trim(),
         variableType: parts[3].trim(),
@@ -99,30 +132,33 @@ class Parser {
     }
   }
 
+  /**
+   * Walks through the tokens and parses them based on their type.
+   */
   walk() {
     let token = this.tokens[this.current];
 
     switch (token.type) {
-      case TYPE_DEFINITIONS:
+      case NODE_TYPE.TYPE_DEFINITION:
         this.current++;
         this.ast.setup.typeDefinitions = this.parseTypeDefinitions(token.value);
         break;
 
-      case DESCRIPTOR_DEFINITIONS:
+      case NODE_TYPE.DESCRIPTOR_DEFINITION:
         this.current++;
         this.ast.setup.descriptorDefinitions = this.parseDescriptorDefinitions(
           token.value
         );
         break;
 
-      case ASSIGNER_DEFINITIONS:
+      case NODE_TYPE.ASSIGNER_DEFINITION:
         this.current++;
         this.ast.setup.assignerDefinitions = this.parseAssignerDefinitions(
           token.value
         );
         break;
 
-      case VARIABLE_ASSIGNMENT:
+      case NODE_TYPE.VARIABLE_ASSIGNMENT:
         this.current++;
         this.ast.body.push(this.parseVariableAssignment(token.value));
         break;
