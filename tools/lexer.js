@@ -1,5 +1,9 @@
 import { NODE_TYPE } from "../utils/enums";
 
+/**
+ * Represents a lexer for a custom scripting language.
+ * @class
+ */
 class Lexer {
   constructor(input) {
     this.input = input;
@@ -8,7 +12,10 @@ class Lexer {
     this.descriptors = new Set(); // To store descriptors
   }
 
-  // Method to lex the input
+  /**
+   * Lexes the input script and generates tokens based on defined token patterns.
+   * @returns {Array} The array of generated tokens.
+   */
   lex() {
     const lines = this.input.split("\n");
 
@@ -41,34 +48,108 @@ class Lexer {
     return this.tokens;
   }
 
+  /**
+   * Processes a setup line based on its type and adds the corresponding token to the tokens array.
+   *
+   * @param {string} line - The setup line to be processed.
+   * @param {object} tokenPatterns - The patterns used to determine the line type.
+   * @returns {void}
+   */
   processSetupLine(line, tokenPatterns) {
-    if (line.match(tokenPatterns.typeDefinition)) {
-      this.tokens.push({ type: NODE_TYPE.TYPE_DEFINITION, value: line });
-    } else if (line.match(tokenPatterns.descriptorDefinition)) {
-      const descriptorList = line
-        .replace(tokenPatterns.descriptorDefinition, "")
-        .trim();
-      descriptorList.split(",").forEach((d) => this.descriptors.add(d.trim()));
-      this.tokens.push({ type: NODE_TYPE.DESCRIPTOR_DEFINITION, value: line });
-    } else if (line.match(tokenPatterns.assignerDefinition)) {
-      this.tokens.push({ type: NODE_TYPE.ASSIGNER_DEFINITION, value: line });
+    // Determine the line type
+    let lineType = this.getLineType(line, tokenPatterns);
+
+    switch (lineType) {
+      case NODE_TYPE.TYPE_DEFINITION:
+        this.tokens.push({ type: NODE_TYPE.TYPE_DEFINITION, value: line });
+        break;
+      case NODE_TYPE.DESCRIPTOR_DEFINITION:
+        const descriptorList = line
+          .replace(tokenPatterns.descriptorDefinition, "")
+          .trim();
+        descriptorList
+          .split(",")
+          .forEach((d) => this.descriptors.add(d.trim()));
+        this.tokens.push({
+          type: NODE_TYPE.DESCRIPTOR_DEFINITION,
+          value: line,
+        });
+        break;
+      case NODE_TYPE.ASSIGNER_DEFINITION:
+        this.tokens.push({ type: NODE_TYPE.ASSIGNER_DEFINITION, value: line });
+        break;
+      // Optionally handle other cases or default case
     }
   }
 
-  processOutsideSetupLine(line, tokenPatterns) {
+  /**
+   * Determines the type of a given line based on the provided token patterns.
+   * @param {string} line - The line to determine the type of.
+   * @param {object} tokenPatterns - The token patterns used for matching.
+   * @returns {string|null} - The type of the line, or null if no match is found.
+   */
+  getLineType(line, tokenPatterns) {
+    if (line.match(tokenPatterns.typeDefinition)) {
+      return NODE_TYPE.TYPE_DEFINITION;
+    } else if (line.match(tokenPatterns.descriptorDefinition)) {
+      return NODE_TYPE.DESCRIPTOR_DEFINITION;
+    } else if (line.match(tokenPatterns.assignerDefinition)) {
+      return NODE_TYPE.ASSIGNER_DEFINITION;
+    }
+    // Add more cases as needed
+    return null; // or a default type
+  }
+
+  /**
+   * Determines the type of a line outside of the setup section.
+   * @param {string} line - The line of code to analyze.
+   * @param {object} tokenPatterns - The token patterns used for matching.
+   * @returns {string|null} - The type of the line or null if it doesn't match any known types.
+   */
+  getLineTypeOutsideSetup(line, tokenPatterns) {
     tokenPatterns.variableAssignment = this.constructVarAssignmentRegex();
     const matchVarAssignment = line.match(tokenPatterns.variableAssignment);
     const matchComment = line.match(tokenPatterns.comment);
 
     if (matchVarAssignment) {
-      this.tokens.push({ type: NODE_TYPE.VARIABLE_ASSIGNMENT, value: line });
+      return NODE_TYPE.VARIABLE_ASSIGNMENT;
     } else if (matchComment) {
-      this.tokens.push({ type: NODE_TYPE.COMMENT, value: line });
+      return NODE_TYPE.COMMENT;
     } else if (line.trim() !== "") {
-      this.tokens.push({ type: NODE_TYPE.UNKNOWN, value: line });
+      return NODE_TYPE.UNKNOWN;
+    }
+
+    return null; // or a default type
+  }
+
+  /**
+   * Processes a line outside of the setup section.
+   * Determines the type of the line and adds it to the tokens array accordingly.
+   *
+   * @param {string} line - The line to process.
+   * @param {object} tokenPatterns - The token patterns used for line type detection.
+   * @returns {void}
+   */
+  processOutsideSetupLine(line, tokenPatterns) {
+    const lineType = this.getLineTypeOutsideSetup(line, tokenPatterns);
+    switch (lineType) {
+      case NODE_TYPE.VARIABLE_ASSIGNMENT:
+        this.tokens.push({ type: NODE_TYPE.VARIABLE_ASSIGNMENT, value: line });
+        break;
+      case NODE_TYPE.COMMENT:
+        this.tokens.push({ type: NODE_TYPE.COMMENT, value: line });
+        break;
+      case NODE_TYPE.UNKNOWN:
+        this.tokens.push({ type: NODE_TYPE.UNKNOWN, value: line });
+        break;
+      // Optionally handle other cases or default case
     }
   }
 
+  /**
+   * Constructs a regular expression for variable assignment.
+   * @returns {RegExp|null} The regular expression for variable assignment, or null if there are no descriptors.
+   */
   constructVarAssignmentRegex() {
     if (this.descriptors.size === 0) return null;
     const descriptorPattern = Array.from(this.descriptors).join("|");
