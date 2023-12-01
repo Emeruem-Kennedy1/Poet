@@ -1,7 +1,7 @@
 # Poet Programming Language
 This is a programming language that allows users to write code in a poetic way. It is a work in progress.
 
-### Setup
+## Setup
 - **Syntax**: `Setup:`
 - **Functionality**: Users define the initial setup of the program. This includes:
   - Types
@@ -29,7 +29,7 @@ You can add the following to the setup:
 - **Syntax**: `Assigner: called, of;`
 - **Functionality**: Users define assigners to introduce the value assignment in a poetic way.
 
-### Variable Assignment Structure
+## Variable Assignment Structure
 - **Format**: `[descriptor] [variable] is a [type] [assigner] [poetic completer] (value)`
 - **Components**:
   - `[descriptor]`: User-defined, adds a unique touch.
@@ -85,3 +85,88 @@ You can add the following to the setup:
 **Notes**:
 - Ensure that you define the types, descriptors, and assigners in the setup before using them in the variable assignment structure. Otherwise, the program will throw an error.
 - The variable assignment structure is a work in progress. It will be updated as the language evolves.
+
+
+## Printing to the Console
+
+In our language, you have the flexibility to print both variable values and direct values (such as strings or numbers) to the console. This is achieved using a unique syntax that combines a pre-defined pre-printing command, a print command, and the content to be printed (either a variable or a direct value).
+
+### Syntax
+
+The general syntax for printing to the console is as follows:
+
+```
+[pre-printing command] [print command] [variable]
+```
+
+or
+
+```
+[pre-printing command] [print command] (value)
+```
+
+### Defining Pre-Printing and Print Commands
+
+First, define a pre-printing command in the setup block of your script. This command is a custom keyword that will precede all print statements.
+
+Example:
+
+```plaintext
+--start setup
+Pre Printing Commands: Magic words, Secret code
+Print Commands: reveal, speak
+--end setup
+```
+
+### Printing a Variable
+
+To print the value of a variable, use the pre-printing command followed by your chosen print command and the variable name.
+
+Example:
+
+```plaintext
+Magic words reveal house
+```
+
+This command will print the value of the variable `house` to the console.
+
+### Printing a Direct Value
+
+To print a direct value such as a string or a number, enclose the value in parentheses and precede it with the pre-printing command and print command.
+
+Example:
+
+```plaintext
+Magic words reveal ('hello world')
+```
+
+This command will print `hello world` to the console.
+
+### Notes
+
+- Ensure that the pre-printing and print commands are defined in the setup block of your script.
+- The print command can be any keyword of your choice and should be used consistently throughout your script.
+- Direct values need to be enclosed in parentheses when printing.
+- Be cautious with variable names and ensure they are defined before attempting to print them.
+
+### Example Usage
+
+```plaintext
+--start setup
+Assigner: called
+Descriptor: My
+Type: shell, pooch as Array
+Pre Printing Commands: Magic words, Secret code
+Print Commands: reveal, speak
+--end setup
+
+My house is a shell called my former self ([1, 2, 3])
+
+# prints [1, 2, 3] to the console
+Magic words reveal house
+
+# prints 'hello world' to the console
+Magic words reveal ('A message to the world')
+```
+
+In this example, the script will print the value of `house` which is `[1, 2, 3]` to the console. It will also print `A message to the world` to the console.
