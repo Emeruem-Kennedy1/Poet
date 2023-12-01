@@ -1,0 +1,17 @@
+{
+  "name": "poet-compiler",
+  "version": "1.0.0",
+  "description": "This is a programming language that allows users to write code in a poetic way. It is a work in progress.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.23.5",
+    "@babel/preset-env": "^7.23.5",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0"
+  }
+}
