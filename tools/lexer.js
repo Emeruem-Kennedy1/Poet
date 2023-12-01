@@ -10,6 +10,8 @@ class Lexer {
     this.tokens = [];
     this.isInSetupBlock = false; // Setup block flag
     this.descriptors = new Set(); // To store descriptors
+    this.prePrintingCommands = new Set(); // To store pre-printing commands
+    this.printCommands = new Set(); // To store print commands
   }
 
   /**
@@ -24,6 +26,8 @@ class Lexer {
       typeDefinition: /^Define Types:/,
       descriptorDefinition: /^Descriptors:/,
       assignerDefinition: /^Assigners:/,
+      prePrintingCommandsDefinition: /^Pre Printing Commands:/,
+      printingCommandsDefinition: /^Print Commands:/,
       comment: /^#.*$/,
       // variableAssignment pattern will be dynamically constructed
     };
@@ -66,7 +70,8 @@ class Lexer {
       case NODE_TYPE.DESCRIPTOR_DEFINITION:
         const descriptorList = line
           .replace(tokenPatterns.descriptorDefinition, "")
-          .trim();
+          .trim()
+          .replace(/;$/, "");
         descriptorList
           .split(",")
           .forEach((d) => this.descriptors.add(d.trim()));
@@ -78,6 +83,33 @@ class Lexer {
       case NODE_TYPE.ASSIGNER_DEFINITION:
         this.tokens.push({ type: NODE_TYPE.ASSIGNER_DEFINITION, value: line });
         break;
+      case NODE_TYPE.PRE_PRINTING_COMMANDS_DEFINITION:
+        const prePrintingCommandList = line
+          .replace(tokenPatterns.prePrintingCommandsDefinition, "")
+          .trim()
+          .replace(/;$/, "");
+        prePrintingCommandList
+          .split(",")
+          .forEach((c) => this.prePrintingCommands.add(c.trim()));
+        this.tokens.push({
+          type: NODE_TYPE.PRE_PRINTING_COMMANDS_DEFINITION,
+          value: line,
+        });
+        break;
+      case NODE_TYPE.PRINTING_COMMANDS_DEFINITION:
+        const printingCommandList = line
+          .replace(tokenPatterns.printingCommandsDefinition, "")
+          .trim()
+          .replace(/;$/, "");
+        printingCommandList
+          .split(",")
+          .forEach((c) => this.printCommands.add(c.trim()));
+        this.tokens.push({
+          type: NODE_TYPE.PRINTING_COMMANDS_DEFINITION,
+          value: line,
+        });
+        break;
+
       // Optionally handle other cases or default case
     }
   }
@@ -95,6 +127,10 @@ class Lexer {
       return NODE_TYPE.DESCRIPTOR_DEFINITION;
     } else if (line.match(tokenPatterns.assignerDefinition)) {
       return NODE_TYPE.ASSIGNER_DEFINITION;
+    } else if (line.match(tokenPatterns.prePrintingCommandsDefinition)) {
+      return NODE_TYPE.PRE_PRINTING_COMMANDS_DEFINITION;
+    } else if (line.match(tokenPatterns.printingCommandsDefinition)) {
+      return NODE_TYPE.PRINTING_COMMANDS_DEFINITION;
     }
     // Add more cases as needed
     return null; // or a default type
@@ -110,11 +146,14 @@ class Lexer {
     tokenPatterns.variableAssignment = this.constructVarAssignmentRegex();
     const matchVarAssignment = line.match(tokenPatterns.variableAssignment);
     const matchComment = line.match(tokenPatterns.comment);
+    const matchPrintStatement = this.isPrintStatement(line);
 
     if (matchVarAssignment) {
       return NODE_TYPE.VARIABLE_ASSIGNMENT;
     } else if (matchComment) {
       return NODE_TYPE.COMMENT;
+    } else if (matchPrintStatement) {
+      return NODE_TYPE.PRINT_STATEMENT;
     } else if (line.trim() !== "") {
       return NODE_TYPE.UNKNOWN;
     }
@@ -142,6 +181,9 @@ class Lexer {
       case NODE_TYPE.UNKNOWN:
         this.tokens.push({ type: NODE_TYPE.UNKNOWN, value: line });
         break;
+      case NODE_TYPE.PRINT_STATEMENT:
+        this.tokens.push({ type: NODE_TYPE.PRINT_STATEMENT, value: line });
+        break;
       // Optionally handle other cases or default case
     }
   }
@@ -156,6 +198,30 @@ class Lexer {
     return new RegExp(
       `^(${descriptorPattern}) \\w+ is a \\w+ called .+ \\(\\d+\\)`
     );
+  }
+
+  constructPrintStatementRegex() {
+    // Ensure there are commands to construct the regex
+    if (this.prePrintingCommands.size === 0 || this.printCommands.size === 0)
+      return null;
+
+    // Create regex patterns for pre-printing and print commands
+    const prePrintingCommandPattern = Array.from(this.prePrintingCommands).join(
+      "|"
+    );
+    const printCommandPattern = Array.from(this.printCommands).join("|");
+
+    // Construct and return the regex for a print statement
+    return new RegExp(
+      `^(${prePrintingCommandPattern}) (${printCommandPattern}) (\\w+|\\('.+'\\))`
+    );
+  }
+
+  isPrintStatement(line) {
+    const printStatementRegex = this.constructPrintStatementRegex();
+    if (!printStatementRegex) return false;
+
+    return printStatementRegex.test(line);
   }
 }
 

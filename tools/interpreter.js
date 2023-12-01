@@ -67,7 +67,7 @@ class Interpreter {
 
   isTypeValid(customType, actualValue) {
     // Check if the custom type is defined
-    console.log(`customType: ${customType}, actualValue: ${actualValue}`);
+
     if (!this.customTypeToJSType.hasOwnProperty(customType)) {
       throw new Error(`Unknown custom type: ${customType}`);
     }
@@ -86,9 +86,6 @@ class Interpreter {
     }
 
     // Check if the actual value's type matches the expected JavaScript type
-    console.log(
-      `expectedJSType: ${expectedJSType}, actualValueType: ${actualValueType}`
-    );
     return expectedJSType === actualValueType;
   }
 
