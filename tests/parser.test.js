@@ -27,15 +27,15 @@ describe("Parser", () => {
         value: "Define Types: shell, rock as Integer",
       },
       { type: "descriptorDefinition", value: "Descriptors: My, Our, Their" },
-      { type: "assignerDefinition", value: "Assigners: called, of" },
+      { type: "assignerDefinition", value: "Assigners: called, of, living" },
       {
         type: "variableAssignment",
         value: "My house is a shell called my former self (1)",
-        },
-        {
-            type: "variableAssignment",
-            value: "My Dog is a rock called brock (2)",
-      }
+      },
+      {
+        type: "variableAssignment",
+        value: "My Dog is a rock living brock (2)",
+      },
     ];
     const parser = new Parser(tokens);
     const ast = parser.parse();
@@ -47,15 +47,15 @@ describe("Parser", () => {
         assigner: "called",
         poeticCompleter: "my former self",
         value: 1,
-        },
-        {
-            descriptor: "My",
-            variableName: "Dog",
-            type: "rock",
-            assigner: "called",
-            poeticCompleter: "brock",
-            value: 2,
-        }
+      },
+      {
+        descriptor: "My",
+        variableName: "Dog",
+        type: "rock",
+        assigner: "living",
+        poeticCompleter: "brock",
+        value: 2,
+      },
     ]);
   });
 
