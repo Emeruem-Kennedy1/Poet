@@ -1,5 +1,5 @@
 import { readFileSync } from "fs";
-import lexer from "./lexer";
+import lexer from "./tools/lexer";
 // Parser: Convert tokens into an AST
 function parser(tokens) {
   // Parse tokens and create an AST

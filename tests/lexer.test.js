@@ -1,4 +1,4 @@
-import lexer from "../lexer";
+import Lexer from "../tools/lexer";
 
 describe("Lexer", () => {
   const inputFile = `--start setup
@@ -8,16 +8,20 @@ describe("Lexer", () => {
 \n--end setup\n# Define variables
 \nMy house is a shell called my former self (1)
 \nmore variables`;
+  
+  const lexer = new Lexer(inputFile);
+  const tokens = lexer.lex();
+  
   test("should return something", () => {
-    expect(lexer(inputFile)).not.toBeUndefined();
+    expect(tokens).not.toBeUndefined();
   });
 
   test("should return an array", () => {
-    expect(lexer(inputFile)).toBeInstanceOf(Array);
+    expect(tokens).toBeInstanceOf(Array);
   });
 
   test("should contain typeDefinition token", () => {
-    expect(lexer(inputFile)).toContainEqual({
+    expect(tokens).toContainEqual({
       type: "typeDefinition",
       value:
         "Define Types: word1, word2, word3 as Arrays; word4, word5 as Integer;",
@@ -25,35 +29,35 @@ describe("Lexer", () => {
   });
     
     test("should contain descriptorDefinition token", () => {
-        expect(lexer(inputFile)).toContainEqual({
+        expect(tokens).toContainEqual({
         type: "descriptorDefinition",
         value: "Descriptors: My, Our, Their;",
         });
     });
 
     test("should contain assignerDefinition token", () => {
-        expect(lexer(inputFile)).toContainEqual({
+        expect(tokens).toContainEqual({
         type: "assignerDefinition",
         value: "Assigners: called, of;",
         });
     });
 
     test("should contain variableAssignment token", () => {
-        expect(lexer(inputFile)).toContainEqual({
+        expect(tokens).toContainEqual({
         type: "variableAssignment",
         value: "My house is a shell called my former self (1)",
         });
     });
 
     test("should contain comment token", () => {
-        expect(lexer(inputFile)).toContainEqual({
+        expect(tokens).toContainEqual({
         type: "comment",
         value: "# Define variables",
         });
     });
 
     test("should contain unknown token", () => {
-        expect(lexer(inputFile)).toContainEqual({
+        expect(tokens).toContainEqual({
         type: "unknown",
         value: "more variables",
         });

@@ -1,4 +1,4 @@
-import Parser from "../parser"; // Adjust the import path as needed
+import Parser from "../tools/parser"; // Adjust the import path as needed
 
 describe("Parser", () => {
   test("should correctly parse type, descriptor, and assigner definitions", () => {
@@ -34,27 +34,29 @@ describe("Parser", () => {
       },
       {
         type: "variableAssignment",
-        value: "My Dog is a rock living brock (2)",
+        value: "Our Dog is a rock living brock (2)",
       },
     ];
     const parser = new Parser(tokens);
     const ast = parser.parse();
     expect(ast.body).toEqual([
       {
+        nodeType: "variableAssignment",
         descriptor: "My",
         variableName: "house",
-        type: "shell",
+        variableType: "shell",
         assigner: "called",
         poeticCompleter: "my former self",
-        value: 1,
+        value: "1",
       },
       {
-        descriptor: "My",
+        nodeType: "variableAssignment",
+        descriptor: "Our",
         variableName: "Dog",
-        type: "rock",
+        variableType: "rock",
         assigner: "living",
         poeticCompleter: "brock",
-        value: 2,
+        value: "2",
       },
     ]);
   });

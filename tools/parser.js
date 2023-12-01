@@ -84,12 +84,13 @@ class Parser {
 
     if (parts) {
       return {
+        nodeType: VARIABLE_ASSIGNMENT,
         descriptor: parts[1].trim(),
         variableName: parts[2].trim(),
-        type: parts[3].trim(),
+        variableType: parts[3].trim(),
         assigner: parts[4].trim(),
         poeticCompleter: parts[5].trim(),
-        value: parseInt(parts[6], 10), // Parse the value as an integer
+        value: parts[6].trim(),
       };
     } else {
       // If no match is found, it might be useful to return or log some error or information
