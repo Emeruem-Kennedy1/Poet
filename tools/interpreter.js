@@ -135,7 +135,7 @@ class Interpreter {
     if (actualValue === null) {
       actualValueType = "null";
     } else if (Array.isArray(actualValue)) {
-      actualValueType = "Array";
+      actualValueType = "array";
     }
 
     // Check if the actual value's type matches the expected JavaScript type

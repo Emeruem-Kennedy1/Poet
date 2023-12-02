@@ -1,12 +1,12 @@
 --start setup
 Assigners: called
 Descriptors: My
-Define Types: shell, pooch as number
-Pre Printing Commands: Magic words, Secret code
+Define Types: shell, pooch as number; mouse as array; truth as boolean
+Pre Printing Commands: Magic words, Secret code, speak
 Print Commands: reveal, speak, shout, exclaim
 --end setup
 
-My house is a shell called my former self (1)
+My house is a shell called my former self (100)
 
 # prints 1 to the console
 Magic words reveal house

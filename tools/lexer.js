@@ -12,6 +12,7 @@ class Lexer {
     this.descriptors = new Set(); // To store descriptors
     this.prePrintingCommands = new Set(); // To store pre-printing commands
     this.printCommands = new Set(); // To store print commands
+    this.assigners = new Set(); // To store assigners
   }
 
   /**
@@ -81,6 +82,11 @@ class Lexer {
         });
         break;
       case NODE_TYPE.ASSIGNER_DEFINITION:
+        const assignerList = line
+          .replace(tokenPatterns.assignerDefinition, "")
+          .trim()
+          .replace(/;$/, "");
+        assignerList.split(",").forEach((a) => this.assigners.add(a.trim()));
         this.tokens.push({ type: NODE_TYPE.ASSIGNER_DEFINITION, value: line });
         break;
       case NODE_TYPE.PRE_PRINTING_COMMANDS_DEFINITION:
@@ -195,8 +201,9 @@ class Lexer {
   constructVarAssignmentRegex() {
     if (this.descriptors.size === 0) return null;
     const descriptorPattern = Array.from(this.descriptors).join("|");
+    const assignerPattern = Array.from(this.assigners).join("|");
     return new RegExp(
-      `^(${descriptorPattern}) \\w+ is a \\w+ called .+ \\(\\d+\\)`
+      `^(${descriptorPattern}) (\\w+) is a (\\w+) (${assignerPattern}) (.+) \\((.+)\\)$`
     );
   }
 
@@ -213,7 +220,7 @@ class Lexer {
 
     // Construct and return the regex for a print statement
     return new RegExp(
-      `^(${prePrintingCommandPattern}) (${printCommandPattern}) (\\w+|\\('.+'\\))`
+      `^(${prePrintingCommandPattern}) (${printCommandPattern}) (.+)$`
     );
   }
 

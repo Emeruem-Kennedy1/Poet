@@ -180,7 +180,7 @@ class Parser {
       .map(this.escapeRegExp)
       .join("|");
 
-    const pattern = `^(${descriptorPattern}) (\\w+) is a (${typePattern}) (${assignerPattern}) ([\\w\\s]+) \\((\\d+)\\)$`;
+    const pattern = `^(${descriptorPattern}) (\\w+) is a (${typePattern}) (${assignerPattern}) ([^\\(]+) \\(([^\\)]+)\\)$`;;
     return new RegExp(pattern, "i"); // 'i' for case-insensitive matching
   }
 
