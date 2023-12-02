@@ -42,4 +42,13 @@ describe("SmartDataStructureParser", () => {
 
     expect(result).toBe(expected);
   });
+
+  test("should parse a boolean value correctly", () => {
+    const input = "true";
+    const expected = true;
+
+    const result = parser.parse(input);
+
+    expect(result).toBe(expected);
+  });
 });
