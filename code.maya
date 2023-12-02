@@ -1,0 +1,15 @@
+--start setup
+Assigners: called
+Descriptors: My
+Define Types: shell, pooch as number
+Pre Printing Commands: Magic words, Secret code
+Print Commands: reveal, speak, shout, exclaim
+--end setup
+
+My house is a shell called my former self (1)
+
+# prints 1 to the console
+Magic words reveal house
+
+# prints 'hello world' to the console
+Magic words exclaim ('A message to the world')

@@ -1,4 +1,4 @@
-import { NODE_TYPE  } from "../utils/enums";
+import { NODE_TYPE  } from "../utils/enums.js";
 
 /**
  * Represents a Parser object that parses tokens into an abstract syntax tree (AST).
@@ -217,6 +217,8 @@ class Parser {
   walk() {
     let token = this.tokens[this.current];
 
+    // console.log("Token:", token);
+
     switch (token.type) {
       case NODE_TYPE.TYPE_DEFINITION:
         this.current++;
@@ -255,6 +257,10 @@ class Parser {
       case NODE_TYPE.PRINT_STATEMENT:
         this.current++;
         this.ast.body.push(this.parsePrintingStatement(token.value));
+        break;
+      
+      case NODE_TYPE.COMMENT:
+        this.current++;
         break;
 
       default:

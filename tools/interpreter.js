@@ -1,5 +1,5 @@
-import SmartDataStructureParser from "../utils/smartDataStructureParser";
-import { NODE_TYPE } from "../utils/enums";
+import SmartDataStructureParser from "../utils/smartDataStructureParser.js";
+import { NODE_TYPE } from "../utils/enums.js";
 
 /**
  * Represents an interpreter for executing a given Abstract Syntax Tree (AST).
@@ -60,7 +60,7 @@ class Interpreter {
     if (!this.variables.hasOwnProperty(content)) {
       throw new Error(`Unknown variable: ${content}`);
     }
-    
+
     const parser = new SmartDataStructureParser();
     const variableValue = this.variables[content];
     const parsedValue = parser.parse(variableValue);
@@ -86,7 +86,7 @@ class Interpreter {
 
   /**
    * Interprets and assigns a value to a variable.
-   * 
+   *
    * @param {Object} node - The node representing the variable assignment.
    * @param {string} node.variableName - The name of the variable.
    * @param {string} node.value - The value to be assigned to the variable.

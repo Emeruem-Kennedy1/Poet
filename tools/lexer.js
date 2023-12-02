@@ -1,4 +1,4 @@
-import { NODE_TYPE } from "../utils/enums";
+import { NODE_TYPE } from "../utils/enums.js";
 
 /**
  * Represents a lexer for a custom scripting language.
