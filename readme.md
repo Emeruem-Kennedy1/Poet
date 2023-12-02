@@ -1,6 +1,14 @@
 # Poet Programming Language
 This is a programming language that allows users to write code in a poetic way. It is a work in progress.
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Setup](#setup)
+- [Variable Assignment Structure](#variable-assignment-structure)
+- [Printing to the Console](#printing-to-the-console)
+- [How to Run a `.maya` Script](#how-to-run-a-maya-script)
+
+
 ## Setup
 - **Syntax**: `Setup:`
 - **Functionality**: Users define the initial setup of the program. This includes:
@@ -18,15 +26,16 @@ This is a programming language that allows users to write code in a poetic way. 
 You can add the following to the setup:
 
 #### Type Creation
-- **Syntax**: `Define Types: word1, word2, word3 as Arrays; word4, word5 as Integer;`
+- **Syntax**: `Define Types: word1, word2 as [variable type]; word3 as [variable type];`
 - **Functionality**: Users define custom keywords to represent standard data types.
+- **valid types**: `string`, `number`, `boolean`, `array`. These are the only valid types for now. More will be added as the language evolves.
 
 #### Descriptors
-- **Syntax**: `Descriptor: My, Our, Their;`
+- **Syntax**: `Descriptor: word1, word2, word3`
 - **Functionality**: Users define descriptors to add a personal or contextual touch to variable declarations.
 
 #### Assigners
-- **Syntax**: `Assigner: called, of;`
+- **Syntax**: `Assigner: word1, word2, word3`
 - **Functionality**: Users define assigners to introduce the value assignment in a poetic way.
 
 ## Variable Assignment Structure
@@ -170,3 +179,63 @@ Magic words reveal ('A message to the world')
 ```
 
 In this example, the script will print the value of `house` which is `[1, 2, 3]` to the console. It will also print `A message to the world` to the console.
+
+## How to Run a `.maya` Script
+### Prerequisites
+
+Before running `poet`, ensure you have the following installed:
+- Node.js (Download and install from [Node.js official website](https://nodejs.org/))
+
+### Installation
+
+1. **Clone the Repository** (if you haven't already):
+   ```
+   git clone https://github.com/Emeruem-Kennedy1/Poet.git
+   cd Poet
+   ```
+
+2. **Install Dependencies**:
+   Navigate to the project directory and run:
+   ```
+   npm install
+   ```
+3. **Link the Package**:
+   To run `poet` from anywhere on your system, you need to link the package.
+   Run the following command in the project directory:
+   ```
+   npm link
+   ```
+   This will create a symlink from the executable to the system path.
+
+### Running `poet`
+
+To run a `.maya` script using `poet`, use the following command in your terminal:
+
+```
+poet -r path/to/your/script.maya
+```
+
+or
+
+```
+poet read path/to/your/script.maya
+```
+
+Replace `path/to/your/script.maya` with the actual path to your `.maya` file.
+
+### Example
+
+Suppose you have a script named `example.maya`. To run this script, navigate to the directory containing `poet` and run:
+
+```
+poet -r example.maya
+```
+
+This will execute the script and display any output in the terminal.
+
+### Troubleshooting
+
+- Ensure the file path is correct and that the file ends with the `.maya` extension.
+- If you encounter any permission issues with the poet command, you might need to run `npm link` again or check your Node.js installation.
+- For any syntax errors or issues within the script, this is a work in progress. I will update this section as the language evolves.
+- If you encounter any other issues, please create an issue on this repository.
