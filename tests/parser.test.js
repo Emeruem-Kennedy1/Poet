@@ -61,5 +61,79 @@ describe("Parser", () => {
     ]);
   });
 
+  test("should correctly parse printing commands", () => {
+    const tokens = [
+      {
+        type: "typeDefinition",
+        value: "Define Types: shell, rock as Integer",
+      },
+      { type: "descriptorDefinition", value: "Descriptors: My, Our, Their" },
+      { type: "assignerDefinition", value: "Assigners: called, of, living" },
+      {
+        type: "prePrintingCommandsDefinition",
+        value: "Pre Printing Commands: Magic words, Secret code",
+      },
+      {
+        type: "printingCommandsDefinition",
+        value: "Print Commands: reveal, speak",
+      },
+      {
+        type: "variableAssignment",
+        value: "Our Dog is a rock living brock (2)",
+      },
+      {
+        type: "printStatement",
+        value: "Magic words reveal (1)",
+      },
+      {
+        type: "printStatement",
+        value: "Secret code speak ([1, 2, 3])",
+      },
+      {
+        type: "printStatement",
+        value: "Magic words reveal Dog",
+      }
+    ];
+    const parser = new Parser(tokens);
+    const ast = parser.parse();
+    expect(ast.setup.prePrintingCommands).toEqual([
+      "Magic words",
+      "Secret code",
+    ]);
+    expect(ast.setup.printingCommands).toEqual(["reveal", "speak"]);
+    expect(ast.body).toEqual([
+      {
+        nodeType: "variableAssignment",
+        descriptor: "Our",
+        variableName: "Dog",
+        variableType: "rock",
+        assigner: "living",
+        poeticCompleter: "brock",
+        value: "2",
+      },
+      {
+        nodeType: "printStatement",
+        printCommand: "reveal",
+        prePrintingCommand: "Magic words",
+        content: "(1)",
+        isVariable: false,
+      },
+      {
+        nodeType: "printStatement",
+        printCommand: "speak",
+        prePrintingCommand: "Secret code",
+        content: "([1, 2, 3])",
+        isVariable: false,
+      },
+      {
+        nodeType: "printStatement",
+        printCommand: "reveal",
+        prePrintingCommand: "Magic words",
+        content: "Dog",
+        isVariable: true,
+      }
+    ]);
+  });
+
   // Add more tests for other aspects of your language as needed
 });

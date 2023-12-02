@@ -15,6 +15,8 @@ class Parser {
         typeDefinitions: {},
         descriptorDefinitions: [],
         assignerDefinitions: [],
+        printingCommands: [],
+        prePrintingCommands: [],
       },
     };
   }
@@ -57,6 +59,7 @@ class Parser {
     return value
       .replace("Descriptors:", "")
       .trim()
+      .replace(/;$/, "")
       .split(",")
       .map((d) => d.trim());
   }
@@ -71,9 +74,29 @@ class Parser {
     return value
       .replace("Assigners:", "")
       .trim()
+      .replace(/;$/, "")
       .split(",")
       .map((a) => a.trim());
   }
+
+  parsePrintingCommands(value) {
+    return value
+      .replace("Print Commands:", "")
+      .trim()
+      .replace(/;$/, "")
+      .split(",")
+      .map((a) => a.trim());
+  }
+
+  parsePrePrintingCommands(value) {
+    return value
+      .replace("Pre Printing Commands:", "")
+      .trim()
+      .replace(/;$/, "")
+      .split(",")
+      .map((a) => a.trim());
+  }
+
 
   /**
    * Escapes special characters in a string for use in a regular expression.
@@ -82,6 +105,41 @@ class Parser {
    */
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+  }
+
+  createRegexFromPrintingAndPrePrintingCommands() {
+    const printingCommandsPattern = this.ast.setup.printingCommands
+      .map(this.escapeRegExp)
+      .join("|");
+    
+    const prePrintingCommandsPattern = this.ast.setup.prePrintingCommands
+      .map(this.escapeRegExp)
+      .join("|");
+    
+    const pattern = `^(${prePrintingCommandsPattern}) (${printingCommandsPattern}) (\\w+|\\((.*?)\\))`;
+    return new RegExp(pattern, "i"); // 'i' for case-insensitive matching
+  }
+
+  parsePrintingStatement(value) {
+    const regex = this.createRegexFromPrintingAndPrePrintingCommands();
+    const parts = value.match(regex);
+
+    const isVariable = (value) => {
+      return !(value.startsWith("(") && value.endsWith(")"));
+    };
+
+    if (parts) {
+      return {
+        nodeType: NODE_TYPE.PRINT_STATEMENT,
+        prePrintingCommand: parts[1].trim(),
+        printCommand: parts[2].trim(),
+        content: parts[3].trim(), // This can be a variable name or a direct value
+        isVariable: isVariable(parts[3].trim()),
+      };
+    } else {
+      console.error("No match found for print statement:", value);
+      return null;
+    }
   }
 
   /**
@@ -161,6 +219,21 @@ class Parser {
       case NODE_TYPE.VARIABLE_ASSIGNMENT:
         this.current++;
         this.ast.body.push(this.parseVariableAssignment(token.value));
+        break;
+      
+      case NODE_TYPE.PRINTING_COMMANDS_DEFINITION:
+        this.current++;
+        this.ast.setup.printingCommands = this.parsePrintingCommands(token.value);
+        break;
+      
+      case NODE_TYPE.PRE_PRINTING_COMMANDS_DEFINITION:
+        this.current++;
+        this.ast.setup.prePrintingCommands = this.parsePrePrintingCommands(token.value);
+        break;
+      
+      case NODE_TYPE.PRINT_STATEMENT:
+        this.current++;
+        this.ast.body.push(this.parsePrintingStatement(token.value));
         break;
 
       default:
