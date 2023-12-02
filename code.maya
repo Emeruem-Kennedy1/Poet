@@ -11,5 +11,5 @@ My house is a shell called my former self (1)
 # prints 1 to the console
 Magic words reveal house
 
-# prints 'hello world' to the console
-Magic words exclaim ('A message to the world')
+# prints 'A message to the world!' to the console
+Magic words exclaim ('A message to the world!')
