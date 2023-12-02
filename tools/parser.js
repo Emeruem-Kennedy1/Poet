@@ -79,6 +79,12 @@ class Parser {
       .map((a) => a.trim());
   }
 
+  /**
+   * Parses the printing commands from the given value.
+   * 
+   * @param {string} value - The value to parse.
+   * @returns {string[]} - An array of parsed printing commands.
+   */
   parsePrintingCommands(value) {
     return value
       .replace("Print Commands:", "")
@@ -88,6 +94,12 @@ class Parser {
       .map((a) => a.trim());
   }
 
+  /**
+   * Parses the pre-printing commands from the given value.
+   * 
+   * @param {string} value - The value to parse.
+   * @returns {string[]} - An array of pre-printing commands.
+   */
   parsePrePrintingCommands(value) {
     return value
       .replace("Pre Printing Commands:", "")
@@ -107,6 +119,10 @@ class Parser {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
   }
 
+  /**
+   * Creates a regular expression from the printing and pre-printing commands defined in the AST setup.
+   * @returns {RegExp} The regular expression pattern for matching printing and pre-printing commands.
+   */
   createRegexFromPrintingAndPrePrintingCommands() {
     const printingCommandsPattern = this.ast.setup.printingCommands
       .map(this.escapeRegExp)
@@ -120,6 +136,11 @@ class Parser {
     return new RegExp(pattern, "i"); // 'i' for case-insensitive matching
   }
 
+  /**
+   * Parses a printing statement and returns an object representing the parsed statement.
+   * @param {string} value - The printing statement to be parsed.
+   * @returns {object|null} - An object representing the parsed printing statement, or null if no match is found.
+   */
   parsePrintingStatement(value) {
     const regex = this.createRegexFromPrintingAndPrePrintingCommands();
     const parts = value.match(regex);
