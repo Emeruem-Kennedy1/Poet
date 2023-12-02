@@ -52,7 +52,8 @@ class Interpreter {
     const { content, isVariable } = node;
 
     if (!isVariable) {
-      console.log(`${content}`);
+      const output = content.replace("(", "").replace(")", "");
+      console.log(`${output}`);
       return;
     }
 

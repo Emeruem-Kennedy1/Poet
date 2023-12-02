@@ -6,6 +6,10 @@ import Lexer from "./tools/lexer.js";
 import Parser from "./tools/parser.js";
 import Interpreter from "./tools/interpreter.js";
 
+/**
+ * Runs the Poet compiler on the specified file.
+ * @param {string} filePath - The path to the file to be compiled.
+ */
 function run(filePath) {
   // Check if the file has a .maya extension
   if (path.extname(filePath) !== ".maya") {

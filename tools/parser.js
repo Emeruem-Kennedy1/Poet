@@ -217,8 +217,6 @@ class Parser {
   walk() {
     let token = this.tokens[this.current];
 
-    // console.log("Token:", token);
-
     switch (token.type) {
       case NODE_TYPE.TYPE_DEFINITION:
         this.current++;

@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "description": "This is a programming language that allows users to write code in a poetic way. It is a work in progress.",
-  "main": "index.js",
+  "main": "poet.js",
   "scripts": {
     "test": "jest"
   },
